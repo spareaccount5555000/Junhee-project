@@ -1,55 +1,58 @@
-import pgzrun
-import random
+import pygame
+pygame.init()
+screen = pygame.display.set_mode([800,600])
 
-HEIGHT = 600
-WIDTH = 800
-GRAVITY = 2000
-
-class Ball:
-    def __init__(self, x, y):
-        self.x = x
-        self.y = y
-        self.vx = 50
-        self.vy = 0
-        self.r = 20
+class Circle():
+    def __init__(self, color, pos, r, w):
+        self.color = color
+        self.pos = pos
+        self.r = r
+        self.w = w
+        self.screen = screen
     
     def draw(self):
-        pos = (self.x, self.y)
-        screen.draw.filled_circle( pos, self.r, "blue")
-
-ball1 = Ball(400, 300)
-
-def draw():
-    screen.clear()
-    ball1.draw()
-
-def update(dt):
-    uy = ball1.vy
-    ball1.vy += GRAVITY * dt
-    ball1.y += (uy + ball1.vy) * 0.5 * dt
-
-    if ball1.y > HEIGHT - ball1.r:
-        ball1.y = HEIGHT - ball1.r
-        ball1.vy = -ball1.vy * 0.5
+        pygame.draw.circle(self.screen, self.color, self.pos, self.r, self.w)
     
-    ball1.x += ball1.vx * dt
+    def draw1(self, grow):
+        self.r += grow
+        pygame.draw.circle(self.screen, self.color, self.pos, self.r, self.w)
 
-    if ball1.x > WIDTH - ball1.r or ball1.x < ball1.r:
-        ball1.vx = -ball1.vx
-
-def on_key_down(key):
-    if key == keys.SPACE:
-        ball1.vy = -400
-
-pgzrun.go()
+         
 
 
+pos = (400, 300)
+r = 30
+w = 2
+pygame.draw.circle(screen, "blue", pos, r, w)
+pygame.display.update()
 
+circle1 = Circle("blue", pos , 60, 2)
+circle2 = Circle("white", pos , 90, 3)  
+circle3 = Circle("purple", pos , 120, 4)    
 
-    
-
-
+while True:
+    for i in pygame.event.get():
+        if i.type == pygame.QUIT:
+            pygame.quit()
+            exit()
+        
+        if i.type == pygame.MOUSEBUTTONDOWN:
+            circle1.draw()
+            circle2.draw()
+            circle3.draw()
+            pygame.display.update()
+        elif i.type == pygame.MOUSEBUTTONUP:
+            circle1.draw1(20)
+            circle2.draw1(30)
+            circle3.draw1(40)
+            pygame.display.update()
+        elif i.type == pygame.MOUSEMOTION:
+            mpos = pygame.mouse.get_pos()
+            circle4 = Circle("white", mpos , 4, 4)
+            circle4.draw()
+            pygame.display.update()
 
 
         
-        
+    
+
