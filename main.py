@@ -1,58 +1,33 @@
 import pygame
+import time
 pygame.init()
-screen = pygame.display.set_mode([800,600])
 
-class Circle():
-    def __init__(self, color, pos, r, w):
-        self.color = color
-        self.pos = pos
-        self.r = r
-        self.w = w
-        self.screen = screen
-    
-    def draw(self):
-        pygame.draw.circle(self.screen, self.color, self.pos, self.r, self.w)
-    
-    def draw1(self, grow):
-        self.r += grow
-        pygame.draw.circle(self.screen, self.color, self.pos, self.r, self.w)
+x = 515
+y = 800
 
-         
+screen = pygame.display.set_mode((x, y))
 
+pygame.display.set_caption("Christmas card")
 
-pos = (400, 300)
-r = 30
-w = 2
-pygame.draw.circle(screen, "blue", pos, r, w)
-pygame.display.update()
+img1pre = pygame.image.load("C:\\Users\\kiewj\\Desktop\\pro gd\\christmascard\\christmastree.jpg")
+img1 = pygame.transform.scale(img1pre, (515, 800))
 
-circle1 = Circle("blue", pos , 60, 2)
-circle2 = Circle("white", pos , 90, 3)  
-circle3 = Circle("purple", pos , 120, 4)    
 
 while True:
-    for i in pygame.event.get():
-        if i.type == pygame.QUIT:
-            pygame.quit()
-            exit()
-        
-        if i.type == pygame.MOUSEBUTTONDOWN:
-            circle1.draw()
-            circle2.draw()
-            circle3.draw()
-            pygame.display.update()
-        elif i.type == pygame.MOUSEBUTTONUP:
-            circle1.draw1(20)
-            circle2.draw1(30)
-            circle3.draw1(40)
-            pygame.display.update()
-        elif i.type == pygame.MOUSEMOTION:
-            mpos = pygame.mouse.get_pos()
-            circle4 = Circle("white", mpos , 4, 4)
-            circle4.draw()
-            pygame.display.update()
+    font = pygame.font.SysFont("TimesNewRoman", 24)
+    text = font.render("Wish you a merry Chirstmas", True, "black")
+    screen.fill("gray")
+    screen.blit(img1, (0, 0))
+    screen.blit(text, (0, 0))
+    pygame.display.update()
+    time.sleep(3)
+    img2pre = pygame.image.load("C:\\Users\\kiewj\\Desktop\\pro gd\\christmascard\\chirstmas2.jpg")
+    img2 = pygame.transform.scale(img2pre, (515, 800))
+    text2 = font.render("and a happy new year", True, "black")
+    screen.blit(img2, (0, 0))
+    screen.blit(text2, (0, 0))
+    pygame.display.update()
+    time.sleep(3)
 
 
-        
-    
 
