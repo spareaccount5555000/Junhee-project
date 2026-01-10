@@ -1,60 +1,53 @@
 import pygame
-from pygame.locals import *
 
-pygame.init()
-screen = pygame.display.set_mode((800, 600))
+x = 800
+y = 600
 
-rocket = pygame.image.load("C:\\Users\\kiewj\\Desktop\\pro gd\\rocketgame\\rocket.png")
-bg = pygame.image.load("C:\\Users\\kiewj\\Desktop\\pro gd\\rocketgame\\space.jpg")
+screen = pygame.display.set_mode((x, y))
+border = pygame.Rect(x//2 - 5, 0, 10, y)
+bg = pygame.image.load("spacebackground.png")
+rockety = pygame.image.load("rocketyellow.png")
+rockety1 = pygame.transform.rotate(pygame.transform.scale(rockety, (50, 40 )), -90)
+rocketr = pygame.image.load("rocketred.png")
+rocketr1 = pygame.transform.rotate(pygame.transform.scale(rocketr, (50, 40 )), 90)
+vel = 0.3
 
-keys = [False, False, False, False]
-
-rocketx = 400
-rockety = 300
-
-while rockety < 600:
+def draw():
     screen.blit(bg, (0, 0))
-    screen.blit(rocket, (rocketx, rockety))
-    pygame.display.flip()
+    screen.blit(rocketr1, (150, 300))
+    screen.blit(rockety1, (650, 300))
+    pygame.display.update()
 
+def redmove(keys_press, red):
+    if keys_press[pygame.K_a] and red.x - vel > 0:
+        red.x -= vel
+    if keys_press[pygame.K_d] and red.x - vel < 400:
+        red.x += vel
+    if keys_press[pygame.K_w] and red.y - vel > 0:
+        red.y -= vel
+    if keys_press[pygame.K_s] and red.y - vel < 600:
+        red.y += vel
+
+def yellowmove(keys_press, yellow):
+    if keys_press[pygame.K_LEFT] and yellow.x - vel > 400:
+        yellow.x -= vel
+    if keys_press[pygame.K_RIGHT] and yellow.x - vel < 800:
+        yellow.x += vel
+    if keys_press[pygame.K_UP] and yellow.y - vel > 0:
+        yellow.y -= vel
+    if keys_press[pygame.K_DOWN] and yellow.y - vel < 600:
+        yellow.y += vel
+
+run = True
+red = pygame.Rect(150, 300, 50, 40)
+yellow = pygame.Rect(650, 300, 50, 40)
+
+while run:
     for i in pygame.event.get():
         if i.type == pygame.QUIT:
+            run = False
             pygame.quit()
-            exit()
-        if i.type == pygame.KEYDOWN:
-            if i.key == K_UP:
-                keys[0] = True
-            if i.key == K_DOWN:
-                keys[1] = True
-            if i.key == K_LEFT:
-                keys[2] = True
-            if i.key == K_RIGHT:
-                keys[3] = True
-        if i.type == pygame.KEYUP:
-            if i.key == K_UP:
-                keys[0] = False
-            if i.key == K_DOWN:
-                keys[1] = False
-            if i.key == K_LEFT:
-                keys[2] = False
-            if i.key == K_RIGHT:
-                keys[3] = False
-    if keys[0]:
-        if rockety > 0:
-            rockety -= 0.3
-    if keys[1]:
-        if rockety < 600:
-            rockety += 0.3
-    if keys[2]:
-        if rocketx > 0:
-            rocketx -= 0.3
-    if keys[3]:
-        if rocketx < 800:
-            rocketx += 0.3
-    
-    rockety += 0.2
-    
-    
-
-
-
+    draw()
+    keys_press = pygame.key.get_pressed()
+    redmove(keys_press, red)
+    yellowmove(keys_press, yellow)
