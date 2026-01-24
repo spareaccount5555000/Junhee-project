@@ -1,17 +1,18 @@
 import pygame
+pygame.init()
 pygame.font.init()
 x = 800
 y = 600
 
-screen = pygame.display.set_mode((x, y))
+screen = pygame.display.set_mode((800, 600))
 border = pygame.Rect(x//2 - 5, 0, 10, y)
 bg = pygame.image.load("spacebackground.png")
 rockety = pygame.image.load("rocketyellow.png")
 rockety1 = pygame.transform.rotate(pygame.transform.scale(rockety, (50, 40 )), -90)
 rocketr = pygame.image.load("rocketred.png")
 rocketr1 = pygame.transform.rotate(pygame.transform.scale(rocketr, (50, 40 )), 90)
-vel = 0.3
-bulletvel = 0.5
+vel = 5
+bulletvel = 5
 maxbullets = 3
 yellowhit = pygame.USEREVENT+1
 redhit = pygame.USEREVENT+2 
@@ -19,29 +20,27 @@ font = pygame.font.SysFont("Times New Roman", 24)
 fps = 165
 
 def drawing(red, yellow, redbullets, yellowbullets, redhealth, yellowhealth):
-    yellow = "yellow"
-    red = "red"
     screen.blit(bg, (0, 0))
     pygame.draw.rect(screen, "black", border)
-    screen.blit(rocketr1, (150, 300))
-    screen.blit(rockety1, (650, 300))
+    screen.blit(rocketr1, (red.x, red.y))
+    screen.blit(rockety1, (yellow.x, yellow.y))
     redhealthtext = font.render("health: " + str(redhealth), True, "black")
     yellowhealthtext = font.render("health: " + str(yellowhealth), True, "black")
     screen.blit(redhealthtext, (50, 50))
-    screen.blit(yellowhealthtext, (750, 50))
+    screen.blit(yellowhealthtext, (650, 50))
     for i in redbullets:
-        pygame.draw.rect(screen, red, i)
+        pygame.draw.rect(screen, "red", i)
     for i in yellowbullets:
-        pygame.draw.rect(screen, yellow, i)
+        pygame.draw.rect(screen, "yellow", i)
     pygame.display.update()
 
 def handlebullets(redbullets, yellowbullets, red, yellow):
     for i in redbullets:
-        i.x -= bulletvel
+        i.x += bulletvel
         if yellow.colliderect(i):
             pygame.event.post(pygame.event.Event(yellowhit))
             redbullets.remove(i)
-        elif i.x < 0:
+        elif i.x > 800:
             redbullets.remove(i)
     for i in yellowbullets:
         i.x -= bulletvel
@@ -54,21 +53,21 @@ def handlebullets(redbullets, yellowbullets, red, yellow):
 def redmove(keys_press, red):
     if keys_press[pygame.K_a] and red.x - vel > 0:
         red.x -= vel
-    if keys_press[pygame.K_d] and red.x - vel < 400:
+    if keys_press[pygame.K_d] and red.x + vel < 400:
         red.x += vel
     if keys_press[pygame.K_w] and red.y - vel > 0:
         red.y -= vel
-    if keys_press[pygame.K_s] and red.y - vel < 600:
+    if keys_press[pygame.K_s] and red.y + vel < 600:
         red.y += vel
 
 def yellowmove(keys_press, yellow):
     if keys_press[pygame.K_LEFT] and yellow.x - vel > 400:
         yellow.x -= vel
-    if keys_press[pygame.K_RIGHT] and yellow.x - vel < 800:
+    if keys_press[pygame.K_RIGHT] and yellow.x + vel < 800:
         yellow.x += vel
     if keys_press[pygame.K_UP] and yellow.y - vel > 0:
         yellow.y -= vel
-    if keys_press[pygame.K_DOWN] and yellow.y - vel < 600:
+    if keys_press[pygame.K_DOWN] and yellow.y + vel < 600:
         yellow.y += vel
 
 run = True
@@ -91,12 +90,23 @@ while run:
                 bullet = pygame.Rect(yellow.x + yellow.width, yellow.y + yellow.height//2 - 2, 10, 5)
                 yellowbullets.append(bullet)
             if i.key == pygame.K_RCTRL and len(redbullets) < maxbullets:
-                bullet = pygame.Rect(red.x, red.y + red.height//2 - 2, 10, 5)
+                bullet = pygame.Rect(red.x + red.width, red.y + red.height//2 - 2, 10, 5)
                 redbullets.append(bullet)
         if i.type == redhit:
             redhealth -= 1
         if i.type == yellowhit:
             yellowhealth -= 1
+    winnertext = ""
+    if redhealth <= 0:
+        winnertext = "Yellow Wins!"
+    if yellowhealth <= 0:
+        winnertext = "Red Wins!"
+    if winnertext != "":
+        drawtext = font.render(winnertext, True, "black")
+        screen.blit(drawtext, (x//2 - drawtext.get_width()//2, y//2 - drawtext.get_height()//2))
+        pygame.display.update()
+        pygame.time.delay(5000)
+        break
     keys_press = pygame.key.get_pressed()
     redmove(keys_press, red)
     yellowmove(keys_press, yellow)
