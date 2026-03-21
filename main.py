@@ -1,15 +1,16 @@
 import pygame
 import random
 pygame.init()
+pygame.font.init()
 
 x = 864
 y = 936
 screen = pygame.display.set_mode((x,y))
 
-bg = pygame.image.load("C:\Users\kiewj\Desktop\pro gd\flappybird\bg.png")
-ground = pygame.image.load("C:\Users\kiewj\Desktop\pro gd\flappybird\ground.png")
-pipe = pygame.image.load("C:\Users\kiewj\Desktop\pro gd\flappybird\pipe.png")
-restart = pygame.image.load("C:\Users\kiewj\Desktop\pro gd\flappybird\restart.png")
+bg = pygame.image.load("C:\\Users\\kiewj\\Desktop\\pro gd\\flappybird\\bg.png")
+ground = pygame.image.load("C:\\Users\\kiewj\\Desktop\\pro gd\\flappybird\\ground.png")
+pipe = pygame.image.load("C:\\Users\\kiewj\\Desktop\\pro gd\\flappybird\\pipe.png")
+restart = pygame.image.load("C:\\Users\\kiewj\\Desktop\\pro gd\\flappybird\\restart.png")
 
 font = pygame.font.SysFont("Arial", 24)
 ground_scroll = 0
@@ -23,9 +24,9 @@ pass_pipe = False
 score = 0
 clock = pygame.time.Clock()
 
-def draw_text(text, font, textcolor, x, y):
-    img = font.render(text, True, textcolor, background=None)
-    screen.blit(img,(x,y))
+def draw_text(text, font, textcolor, x1, y1):
+    img = font.render(text, True, textcolor)
+    screen.blit(img,(x1,y1))
 
 def reset_game():
     pipe_group.empty()
@@ -41,7 +42,7 @@ class Bird(pygame.sprite.Sprite):
         self.index = 0
         self.counter = 0
         for i in range(1,4):
-            img = pygame.image.load(f"C:\Users\kiewj\Desktop\pro gd\flappybird\bird{i}.png")
+            img = pygame.image.load(f"C:\\Users\\kiewj\\Desktop\\pro gd\\flappybird\\bird{i}.png")
             self.images.append(img)
         self.image = self.images[self.index]
         self.rect = self.image.get_rect()
@@ -76,7 +77,7 @@ class Bird(pygame.sprite.Sprite):
 class Pipe(pygame.sprite.Sprite):
     def __init__(self, x, y, pos):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.image.load("C:\Users\kiewj\Desktop\pro gd\flappybird\pipe.png")
+        self.image = pygame.image.load("C:\\Users\\kiewj\\Desktop\\pro gd\\flappybird\\pipe.png")
         self.rect = self.image.get_rect()
         if pos == 1:
             self.image = pygame.transform.flip(self.image, False, True)
@@ -128,6 +129,33 @@ while True:
     if flappy.rect.bottom >= 768:
         game_over = True
         flying = False
+    if flying == True and game_over == False:
+        time_now = pygame.time.get_ticks()
+        if time_now - last_pipe > pipe_frequency:
+            pipe_height = random.randint(-100, 100)
+            bottom_pipe = Pipe(x, int(y/2) + pipe_height, -1)
+            top_pipe = Pipe(x, int(y/2) + pipe_height, 1)
+            pipe_group.add(bottom_pipe)
+            pipe_group.add(top_pipe)
+            last_pipe = time_now
+        pipe_group.update()
+        ground_scroll -= scroll_speed
+        if abs(ground_scroll) > 35:
+            ground_scroll = 0
+    if game_over == True:
+        if button.draw():
+            game_over = False
+            score = reset_game()
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            run = False
+            pygame.quit()
+        if event.type == pygame.MOUSEBUTTONDOWN and flying == False and game_over == False:
+            flying = True
+    pygame.display.update()
+
+
+
         
 
 
